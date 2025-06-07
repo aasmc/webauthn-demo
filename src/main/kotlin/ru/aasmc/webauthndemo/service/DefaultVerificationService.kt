@@ -2,8 +2,6 @@ package ru.aasmc.webauthndemo.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.webauthn4j.WebAuthnManager
-import com.webauthn4j.credential.CoreCredentialRecordImpl
-import com.webauthn4j.credential.CredentialRecord
 import com.webauthn4j.credential.CredentialRecordImpl
 import com.webauthn4j.data.AuthenticationData
 import com.webauthn4j.data.AuthenticationParameters
