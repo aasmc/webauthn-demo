@@ -2,9 +2,13 @@ package ru.aasmc.webauthndemo.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.webauthn4j.WebAuthnManager
+import com.webauthn4j.credential.CoreCredentialRecordImpl
+import com.webauthn4j.credential.CredentialRecord
 import com.webauthn4j.credential.CredentialRecordImpl
 import com.webauthn4j.data.AuthenticationData
 import com.webauthn4j.data.AuthenticationParameters
+import com.webauthn4j.data.attestation.AttestationObject
+import com.webauthn4j.data.attestation.authenticator.AuthenticatorData
 import com.webauthn4j.data.client.Origin
 import com.webauthn4j.data.client.challenge.DefaultChallenge
 import com.webauthn4j.server.ServerProperty
@@ -36,21 +40,9 @@ class DefaultVerificationService(
             val authenticationData: AuthenticationData = getAuthenticatorData(request, manager)
             val credentialId = getCredentialId(authenticationData)
             verifyAuthenticationData(credentialId, manager, authenticationData)
-            updateSignCount(authenticationData, credentialId)
             return VerifyResult("http://locahost:8080/redirect-uri")
         } catch (t: Throwable) {
             throw WebAuthnException(HttpStatus.INTERNAL_SERVER_ERROR, t.message ?: "unknown exception", t)
-        }
-    }
-
-    private fun updateSignCount(authenticationData: AuthenticationData, credentialId: String) {
-        val signCount = authenticationData.authenticatorData?.signCount ?: throw WebAuthnException(
-            HttpStatus.BAD_REQUEST,
-            "no sign count in request"
-        )
-        val updated = repository.updateCounter(credentialId, signCount)
-        if (updated == 0) {
-            throw WebAuthnException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update signature counter")
         }
     }
 
@@ -88,6 +80,29 @@ class DefaultVerificationService(
         )
 
         manager.verify(authenticationData, authenticationParameters)
+        updateSignCount(authenticationData, credentialEntity)
+    }
+
+    private fun updateSignCount(authenticationData: AuthenticationData, credentialEntity: CredentialEntity) {
+        val toCopy = credentialEntity.attestationObject?.authenticatorData
+        val newSignCount = authenticationData.authenticatorData?.signCount ?: throw WebAuthnException(
+            HttpStatus.BAD_REQUEST,
+            "no sign count in request"
+        )
+        val updatedData = AuthenticatorData(
+            toCopy!!.rpIdHash,
+            toCopy.flags,
+            newSignCount,
+            toCopy.attestedCredentialData,
+            toCopy.extensions
+        )
+
+        val updatedAttestation = AttestationObject(
+            updatedData,
+            credentialEntity.attestationObject!!.attestationStatement
+        )
+        credentialEntity.attestationObject = updatedAttestation
+        repository.save(credentialEntity)
     }
 
     private fun getCredentialRecord(credentialEntity: CredentialEntity): CredentialRecordImpl {
