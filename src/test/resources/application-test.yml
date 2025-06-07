@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:postgresql:16.1:///test_database
+    username: user
+    password: password
+
+app:
+  relying-party:
+    origin: "http://example.com" # as in EmulatorUtil
+    id: "party-id"
+    user-presence-required: false
+    user-verification-required: false

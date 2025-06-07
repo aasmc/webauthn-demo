@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: webauth-demo
+  datasource:
+    username: webauthn
+    password: password
+    url: jdbc:postgresql://localhost:5432/webauthndb
+    hikari:
+      connection-timeout: 2000
+      maximum-pool-size: 24
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+
+app:
+  relying-party:
+    origin: "http://localhost:8080"
+    id: "party-id"
+    user-presence-required: false
+    user-verification-required: false
+
