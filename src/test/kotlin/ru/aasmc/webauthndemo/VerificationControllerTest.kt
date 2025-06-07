@@ -11,7 +11,7 @@ import com.webauthn4j.data.client.challenge.DefaultChallenge
 import com.webauthn4j.data.extension.client.AuthenticationExtensionClientOutput
 import com.webauthn4j.data.extension.client.RegistrationExtensionClientOutput
 import com.webauthn4j.test.EmulatorUtil
-import com.webauthn4j.test.authenticator.u2f.FIDOU2FAuthenticator
+import com.webauthn4j.test.authenticator.webauthn.PackedAuthenticator
 import com.webauthn4j.test.client.ClientPlatform
 import com.webauthn4j.util.Base64UrlUtil
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
@@ -41,7 +41,7 @@ class VerificationControllerTest @Autowired constructor(
 ) {
 
     private val url = "/api/v1/verify"
-    private val platform: ClientPlatform = EmulatorUtil.createClientPlatform( FIDOU2FAuthenticator())
+    private val platform: ClientPlatform = EmulatorUtil.createClientPlatform(PackedAuthenticator())
 
     @Test
     fun verify() {

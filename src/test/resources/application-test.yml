@@ -9,5 +9,5 @@ app:
   relying-party:
     origin: "http://example.com" # as in EmulatorUtil
     id: "party-id"
-    user-presence-required: false
-    user-verification-required: false
+    user-presence-required: true
+    user-verification-required: true

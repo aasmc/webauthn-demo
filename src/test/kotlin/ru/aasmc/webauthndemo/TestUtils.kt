@@ -42,7 +42,7 @@ fun authenticatePassKeys(
                 null
             )
         ),
-        UserVerificationRequirement.DISCOURAGED,
+        UserVerificationRequirement.REQUIRED,
         null
     )
     return clientPlatform.get(pkOptions)
@@ -77,10 +77,10 @@ fun createPublicKeyCredentialCreationOptions(appProperties: AppProperties,
             AuthenticatorAttachment.PLATFORM,
             false,
             ResidentKeyRequirement.DISCOURAGED,
-            UserVerificationRequirement.PREFERRED
+            UserVerificationRequirement.REQUIRED
         ),
         null,
-        AttestationConveyancePreference.NONE,
+        AttestationConveyancePreference.DIRECT,
         null
     )
 }
